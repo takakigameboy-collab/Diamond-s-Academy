@@ -5,7 +5,7 @@ const dadosIniciais = {
     planos: [
         { id: 'diaria', nome: 'Diária', preco: 20 },
         { id: 'mensal', nome: 'Mensal', preco: 90 },
-        { id: 'anual', nome: 'Anual', preco: 800 }
+        { id: 'anual', nome: 'Anual', preco: 120 }
     ],
     atividades: [
         { id: 'karate', nome: 'Karatê', preco: 50 },
