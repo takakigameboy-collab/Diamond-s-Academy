@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrada - CyberGym</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo" style="text-decoration: none;">CYBER<span>GYM</span></a>
+        <a href="cadastro.html" class="btn-neon">Cadastrar Novo Aluno</a>
+    </header>
+
+    <main class="container">
+        <div class="box-formulario">
+            <h2 class="titulo-secao" style="font-size: 1.5rem; margin-bottom: 20px;">Acessar Painel</h2>
+            
+            <form id="form-login">
+                <div class="grupo-campo">
+                    <label for="usuario">Apelido do Usuário ou Admin</label>
+                    <input type="text" id="usuario" required placeholder="Ex: admin ou seu apelido">
+                </div>
+                
+                <div class="grupo-campo">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="Sua senha">
+                </div>
+
+                <button type="submit" class="btn-neon btn-form">Entrar</button>
+            </form>
+            
+            <p style="text-align: center; margin-top: 20px; color: var(--cor-texto-segundario); font-size: 0.9rem;">
+                Não tem conta? <a href="cadastro.html" style="color: var(--cor-ciano)">Cadastre-se aqui</a>
+            </p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('form-login').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const usuarioDigitado = document.getElementById('usuario').value.trim();
+            const senhaDigitada = document.getElementById('senha').value;
+
+            // 1. Verificação se é Administrador
+            if (usuarioDigitado === 'admin' && senhaDigitada === 'admin1') {
+                alert('Bem-vindo, Administrador!');
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // 2. Verificação se é Aluno comum (busca no banco pelo apelido e senha)
+            const db = obterDados();
+            const alunoEncontrado = db.alunos.find(aluno => 
+                aluno.apelido.toLowerCase() === usuarioDigitado.toLowerCase() && 
+                aluno.senha === senhaDigitada
+            );
+
+            if (alunoEncontrado) {
+                // Guarda qual aluno está logado no momento para usar na tela dele
+                localStorage.setItem('aluno_logado_id', alunoEncontrado.id);
+                alert(`Olá, ${alunoEncontrado.nome}! Direcionando para sua área.`);
+                window.location.href = 'aluno.html';
+            } else {
+                alert('Usuário ou senha incorretos! Para testar admin utilize usuário "admin" e senha "admin1".');
+            }
+        });
+    </script>
+</body>
+</html>

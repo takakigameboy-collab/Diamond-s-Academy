@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - CyberGym</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo" style="text-decoration: none;">CYBER<span>GYM</span></a>
+        <a href="login.html" class="btn-neon">Voltar para Login</a>
+    </header>
+
+    <main class="container">
+        <div class="box-formulario" style="max-width: 550px;">
+            <h2 class="titulo-secao" style="font-size: 1.5rem; margin-bottom: 20px;">Matrícula de Aluno</h2>
+            
+            <form id="form-cadastro">
+                <div class="grupo-campo">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" required placeholder="Digite seu nome completo">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="apelido">Apelido no Site (Nome de Usuário)</label>
+                    <input type="text" id="apelido" required placeholder="Ex: joaosilva (usado para fazer login)">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="plano">Escolha seu Plano Base</label>
+                    <select id="plano" required>
+                        <!-- Carregado via JS -->
+                    </select>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="atividade">Atividade Extra (Opcional)</label>
+                    <select id="atividade">
+                        <option value="nenhuma">Nenhuma - Apenas musculação</option>
+                        <!-- Carregado via JS -->
+                    </select>
+                </div>
+                
+                <div class="grupo-campo">
+                    <label for="senha">Crie uma Senha</label>
+                    <input type="password" id="senha" required placeholder="Digite sua senha de acesso">
+                </div>
+
+                <button type="submit" class="btn-neon btn-form">Finalizar Matrícula</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Função para preencher as opções de Planos e Atividades baseado no que temos no banco
+        function carregarOpcoesFormulario() {
+            const db = obterDados();
+            
+            // Preenche o Select de Planos
+            const selectPlano = document.getElementById('plano');
+            selectPlano.innerHTML = db.planos.map(p => `
+                <option value="${p.id}">Plano ${p.nome} - R$ ${p.preco.toFixed(2)}</option>
+            `).join('');
+
+            // Preenche o Select de Atividades Extras
+            const selectAtividade = document.getElementById('atividade');
+            // Mantém a opção inicial padrão e adiciona as do banco
+            let opcoesAtividades = '<option value="nenhuma">Nenhuma - Apenas musculação</option>';
+            db.atividades.forEach(a => {
+                opcoesAtividades += `<option value="${a.id}">${a.nome} (+ R$ ${a.preco.toFixed(2)})</option>`;
+            });
+            selectAtividade.innerHTML = opcoesAtividades;
+        }
+
+        // Evento de envio do formulário
+        document.getElementById('form-cadastro').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const apelido = document.getElementById('apelido').value.trim();
+            const plano = document.getElementById('plano').value;
+            const atividade = document.getElementById('atividade').value;
+            const senha = document.getElementById('senha').value;
+
+            // Executa a função do script.js
+            const sucesso = cadastrarAluno(nome, apelido, plano, atividade, senha);
+
+            if (sucesso) {
+                alert('Cadastro realizado com sucesso! Faça login para acessar sua área.');
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Inicializa os campos assim que a página abre
+        carregarOpcoesFormulario();
+    </script>
+</body>
+</html>

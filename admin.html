@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - CyberGym</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos específicos para o painel admin ficarem mais organizados */
+        .grid-metricas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .card-metrica {
+            background-color: var(--cor-card);
+            border-left: 4px solid var(--cor-azul);
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .card-metrica.destaque {
+            border-left-color: var(--cor-ciano);
+        }
+        .card-metrica h4 {
+            color: var(--cor-texto-segundario);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .card-metrica .valor {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .secao-admin {
+            background-color: var(--cor-card);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #232836;
+        }
+        .secao-admin h3 {
+            margin-bottom: 20px;
+            color: var(--cor-ciano);
+            border-bottom: 1px solid #232836;
+            padding-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #232836;
+        }
+        th {
+            color: var(--cor-texto-segundario);
+            font-size: 0.9rem;
+        }
+        .btn-deletar {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-deletar:hover {
+            background: #cc0000;
+        }
+        .input-tabela {
+            width: 80px;
+            padding: 4px;
+            background: #0f111a;
+            border: 1px solid #232836;
+            color: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CYBER<span>ADMIN</span></div>
+        <nav>
+            <a href="index.html" class="btn-neon">Sair do Painel</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2 class="titulo-secao" style="text-align: left;">Painel de Controle</h2>
+
+        <!-- 📊 Bloco de Métricas Financeiras -->
+        <div class="grid-metricas">
+            <div class="card-metrica">
+                <h4>Total de Alunos</h4>
+                <div class="valor" id="metrica-alunos">0</div>
+            </div>
+            <div class="card-metrica destaque">
+                <h4>Valor Total Recebido</h4>
+                <div class="valor" id="metrica-total" style="color: var(--cor-ciano)">R$ 0,00</div>
+            </div>
+            <div class="card-metrica" style="border-left-color: #ff3333;">
+                <h4>Valor em Atraso</h4>
+                <div class="valor" id="metrica-atrasado" style="color: #ff3333;">R$ 0,00</div>
+            </div>
+            <div class="card-metrica">
+                <h4>Faturamento Potencial</h4>
+                <div class="valor" id="metrica-potencial">R$ 0,00</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+            <!-- ⚙️ Configuração de Preços dos Planos -->
+            <div class="secao-admin">
+                <h3>Gerenciar Planos</h3>
+                <table id="tabela-planos">
+                    <thead>
+                        <tr>
+                            <th>Plano</th>
+                            <th>Preço Atual</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody><!-- Via JS --></tbody>
+                </table>
+            </div>
+
+            <!-- 🥋 Configuração de Atividades Extras -->
+            <div class="secao-admin">
+                <h3>Gerenciar Atividades</h3>
+                <table id="tabela-atividades">
+                    <thead>
+                        <tr>
+                            <th>Atividade</th>
+                            <th>Preço Atual</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody><!-- Via JS --></tbody>
+                </table>
+                
+                <h4 style="margin-top: 20px; margin-bottom: 10px; color: var(--cor-texto-segundario);">Adicionar Nova Modalidade</h4>
+                <form id="form-nova-atividade" style="display: flex; gap: 10px;">
+                    <input type="text" id="nova-atv-nome" placeholder="Ex: Judô" required style="flex: 2; padding: 8px; background: #0f111a; border: 1px solid #232836; color: white; border-radius: 4px;">
+                    <input type="number" id="nova-atv-preco" placeholder="R$ 50" required style="flex: 1; padding: 8px; background: #0f111a; border: 1px solid #232836; color: white; border-radius: 4px;">
+                    <button type="submit" class="btn-neon" style="padding: 8px 15px; font-size: 0.8rem;">Criar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 👥 Lista Completa de Alunos Cadastrados -->
+        <div class="secao-admin" style="margin-top: 30px;">
+            <h3>Alunos Matriculados</h3>
+            <table id="tabela-alunos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Apelido</th>
+                        <th>Plano</th>
+                        <th>Atividade Extra</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody><!-- Via JS --></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Atualiza a tela inteira com as informações atuais do banco de dados
+        function renderizarPainel() {
+            const db = obterDados();
+            const metricas = calcularMetricasAdmin();
+
+            // 1. Atualizar Blocos Financeiros
+            document.getElementById('metrica-alunos').innerText = metricas.totalAlunos;
+            document.getElementById('metrica-total').innerText = `R$ ${metricas.valorTotalPago.toFixed(2)}`;
+            document.getElementById('metrica-atrasado').innerText = `R$ ${metricas.valorAtrasado.toFixed(2)}`;
+            document.getElementById('metrica-potencial').innerText = `R$ ${metricas.valorPotencial.toFixed(2)}`;
+
+            // 2. Renderizar Tabela de Planos
+            const tbodyPlanos = document.querySelector('#tabela-planos tbody');
+            tbodyPlanos.innerHTML = db.planos.map(p => `
+                <tr>
+                    <td>${p.nome}</td>
+                    <td>R$ <input type="number" class="input-tabela" id="inp-plano-${p.id}" value="${p.preco}"></td>
+                    <td><button class="btn-neon" style="padding: 4px 10px; font-size: 0.75rem;" onclick="salvarNovoPrecoPlano('${p.id}')">Salvar</button></td>
+                </tr>
+            `).join('');
+
+            // 3. Renderizar Tabela de Atividades
+            const tbodyAtividades = document.querySelector('#tabela-atividades tbody');
+            tbodyAtividades.innerHTML = db.atividades.map(a => `
+                <tr>
+                    <td>${a.nome}</td>
+                    <td>R$ <input type="number" class="input-tabela" id="inp-atv-${a.id}" value="${a.preco}"></td>
+                    <td><button class="btn-neon" style="padding: 4px 10px; font-size: 0.75rem;" onclick="salvarNovoPrecoAtv('${a.id}')">Salvar</button></td>
+                </tr>
+            `).join('');
+
+            // 4. Renderizar Tabela de Alunos
+            const tbodyAlunos = document.querySelector('#tabela-alunos tbody');
+            tbodyAlunos.innerHTML = db.alunos.map(aluno => {
+                const planoNome = db.planos.find(p => p.id === aluno.plano)?.nome || aluno.plano;
+                const atvNome = aluno.atividade === 'nenhuma' ? 'Nenhuma' : (db.atividades.find(a => a.id === aluno.atividade)?.nome || aluno.atividade);
+                const statusCor = aluno.status === 'pago' ? 'var(--cor-ciano)' : '#ff3333';
+                
+                return `
+                    <tr>
+                        <td>${aluno.id}</td>
+                        <td>${aluno.nome}</td>
+                        <td>${aluno.apelido}</td>
+                        <td>Plano ${planoNome}</td>
+                        <td>${atvNome}</td>
+                        <td style="color: ${statusCor}; font-weight: bold; text-transform: uppercase;">${aluno.status}</td>
+                        <td><button class="btn-deletar" onclick="deletarAluno(${aluno.id})">Remover</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Funções acionadas pelos cliques nos botões da tabela
+        function salvarNovoPrecoPlano(id) {
+            const novoPreco = document.getElementById(`inp-plano-${id}`).value;
+            atualizarPrecoPlano(id, novoPreco);
+            renderizarPainel(); // Recarrega os cálculos na tela na hora
+        }
+
+        function salvarNovoPrecoAtv(id) {
+            const novoPreco = document.getElementById(`inp-atv-${id}`).value;
+            atualizarPrecoAtv(id, novoPreco);
+            renderizarPainel();
+        }
+
+        function deletarAluno(id) {
+            if (confirm("Tem certeza que deseja remover este aluno?")) {
+                removerAluno(id);
+                renderizarPainel();
+            }
+        }
+
+        function deletarAluno(id) {
+            if (confirm("Tem certeza que deseja remover este aluno?")) {
+                removerAluno(id);
+                renderizarPainel();
+            }
+        }
+
+        // Evento para adicionar nova atividade extra
+        document.getElementById('form-nova-atividade').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nova-atv-nome').value.trim();
+            const preco = document.getElementById('nova-atv-preco').value;
+
+            adicionarAtividade(nome, preco);
+            document.getElementById('nova-atv-nome').value = '';
+            document.getElementById('nova-atv-preco').value = '';
+            renderizarPainel();
+        });
+
+        // Inicializa a renderização quando a página abre
+        renderizarPainel();
+    </script>
+</body>
+</html>

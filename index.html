@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGym - Academia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">CYBER<span>GYM</span></div>
+        <nav>
+            <a href="login.html" class="btn-neon">Entrada</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2 class="titulo-secao">Nossos Planos</h2>
+        <div class="grid-cards" id="container-planos">
+            <!-- Gerado via JavaScript dinamicamente -->
+        </div>
+
+        <h2 class="titulo-secao" style="margin-top: 60px;">Atividades Extras</h2>
+        <div class="grid-cards" id="container-atividades">
+            <!-- Gerado via JavaScript dinamicamente -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Script exclusivo desta página para renderizar os preços reais do LocalStorage
+        function carregarVitrine() {
+            const db = obterDados();
+            
+            // Renderiza Planos
+            const containerPlanos = document.getElementById('container-planos');
+            containerPlanos.innerHTML = db.planos.map(plano => `
+                <div class="card">
+                    <h3>Plano ${plano.nome}</h3>
+                    <div class="preco">R$ ${plano.preco.toFixed(2)}</div>
+                    <p style="color: var(--cor-texto-segundario)">Acesso completo à estrutura</p>
+                </div>
+            `).join('');
+
+            // Renderiza Atividades Extras
+            const containerAtividades = document.getElementById('container-atividades');
+            containerAtividades.innerHTML = db.atividades.map(atv => `
+                <div class="card" style="border-color: rgba(0, 242, 254, 0.2)">
+                    <h3>${atv.nome}</h3>
+                    <div class="preco" style="color: var(--cor-ciano)">R$ ${atv.preco.toFixed(2)}</div>
+                    <p style="color: var(--cor-texto-segundario)">Aulas com instrutor certificado</p>
+                </div>
+            `).join('');
+        }
+
+        // Executa ao abrir a página
+        carregarVitrine();
+    </script>
+</body>
+</html>

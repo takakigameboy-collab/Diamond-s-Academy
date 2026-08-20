@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Aluno - CyberGym</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .painel-aluno {
+            background-color: var(--cor-card);
+            border: 1px solid #232836;
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 650px;
+            margin: 40px auto;
+        }
+        .boas-vindas {
+            border-bottom: 2px solid var(--cor-azul);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .boas-vindas h2 {
+            color: #ffffff;
+            font-size: 1.8rem;
+        }
+        .boas-vindas span {
+            color: var(--cor-ciano);
+        }
+        .bloco-fatura {
+            background: #0f111a;
+            border: 1px dashed var(--cor-azul);
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-pagar {
+            font-size: 1.8rem;
+            color: var(--cor-ciano);
+            font-weight: bold;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CYBER<span>ALUNO</span></div>
+        <nav>
+            <a href="index.html" class="btn-neon" onclick="deslogar()">Sair da Conta</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="painel-aluno">
+            <div class="boas-vindas">
+                <h2>Olá, <span id="nome-aluno">Carregando...</span>!</h2>
+                <p style="color: var(--cor-texto-segundario); margin-top: 5px;">Gerencie sua assinatura abaixo.</p>
+            </div>
+
+            <!-- Bloco de cobrança -->
+            <div class="bloco-fatura">
+                <div>
+                    <h4 style="color: var(--cor-texto-segundario); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 5px;">Sua Mensalidade Atual</h4>
+                    <div class="total-pagar" id="valor-fatura">R$ 0,00</div>
+                </div>
+                <div>
+                    <span id="status-pagamento" class="status-badge">PAGO</span>
+                </div>
+            </div>
+
+            <!-- Formulário para alteração de plano/atividade -->
+            <h3 style="color: #ffffff; margin-bottom: 20px; font-size: 1.2rem;">Alterar Plano ou Atividade</h3>
+            <form id="form-alterar-perfil">
+                <div class="grupo-campo">
+                    <label for="select-plano">Seu Plano</label>
+                    <select id="select-plano" required>
+                        <!-- Injetado via JS -->
+                    </select>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="select-atividade">Sua Atividade Extra</label>
+                    <select id="select-atividade" required>
+                        <!-- Injetado via JS -->
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-neon btn-form" style="margin-top: 15px;">Salvar Alterações</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Captura o ID do aluno armazenado no login
+        const alunoLogadoId = parseInt(localStorage.getItem('aluno_logado_id'));
+
+        // Se tentar acessar a página sem fazer login, joga de volta para a index
+        if (!alunoLogadoId) {
+            alert('Acesso negado! Por favor, faça login.');
+            window.location.href = 'login.html';
+        }
+
+        function carregarPainelAluno() {
+            const db = obterDados();
+            const aluno = db.alunos.find(a => a.id === alunoLogadoId);
+
+            if (!aluno) return;
+
+            // 1. Escreve o nome na tela
+            document.getElementById('nome-aluno').innerText = aluno.nome;
+
+            // 2. Renderiza as opções de Planos do banco
+            const selectPlano = document.getElementById('select-plano');
+            selectPlano.innerHTML = db.planos.map(p => `
+                <option value="${p.id}" ${p.id === aluno.plano ? 'selected' : ''}>Plano ${p.nome} - R$ ${p.preco.toFixed(2)}</option>
+            `).join('');
+
+            // 3. Renderiza as opções de Atividades do banco
+            const selectAtividade = document.getElementById('select-atividade');
+            let opcoesAtividades = `<option value="nenhuma" ${aluno.atividade === 'nenhuma' ? 'selected' : ''}>Nenhuma - Apenas musculação</option>`;
+            db.atividades.forEach(a => {
+                opcoesAtividades += `<option value="${a.id}" ${a.id === aluno.atividade ? 'selected' : ''}>${a.nome} (+ R$ ${a.preco.toFixed(2)})</option>`;
+            });
+            selectAtividade.innerHTML = opcoesAtividades;
+
+            // 4. Calcula o valor da fatura atual dele
+            const precoPlano = db.planos.find(p => p.id === aluno.plano)?.preco || 0;
+            const precoAtv = db.atividades.find(a => a.id === aluno.atividade)?.preco || 0;
+            const total = precoPlano + precoAtv;
+
+            document.getElementById('valor-fatura').innerText = `R$ ${total.toFixed(2)}`;
+
+            // 5. Atualiza a cor e texto do status
+            const badge = document.getElementById('status-pagamento');
+            badge.innerText = aluno.status;
+            if (aluno.status === 'pago') {
+                badge.style.background = 'rgba(0, 242, 254, 0.2)';
+                badge.style.color = 'var(--cor-ciano)';
+            } else {
+                badge.style.background = 'rgba(255, 51, 51, 0.2)';
+                badge.style.color = '#ff3333';
+            }
+        }
+
+        // Evento para atualizar plano e atividade no banco ao clicar em salvar
+        document.getElementById('form-alterar-perfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const novoPlano = document.getElementById('select-plano').value;
+            const novaAtividade = document.getElementById('select-atividade').value;
+
+            const sucesso = atualizarPerfilAluno(alunoLogadoId, novoPlano, novaAtividade);
+
+            if (sucesso) {
+                alert('Plano e atividades atualizados com sucesso!');
+                carregarPainelAluno(); // Recarrega os valores na tela na hora
+            }
+        });
+
+        // Limpa o login do navegador ao sair
+        function deslogar() {
+            localStorage.removeItem('aluno_logado_id');
+        }
+
+        // Executa ao abrir a página
+        carregarPainelAluno();
+    </script>
+</body>
+</html>

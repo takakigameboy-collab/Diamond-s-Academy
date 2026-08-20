@@ -1,0 +1,156 @@
+:root {
+    --cor-fundo: #0a0b0d;
+    --cor-card: #14171f;
+    --cor-azul: #0066ff;
+    --cor-ciano: #00f2fe;
+    --cor-texto: #ffffff;
+    --cor-texto-segundario: #a0aec0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    padding-top: 80px; /* Espaço para o menu fixo */
+}
+
+/* Menu de Navegação Superior */
+header {
+    background-color: rgba(20, 23, 31, 0.95);
+    border-bottom: 2px solid var(--cor-azul);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--cor-texto);
+}
+
+.logo span {
+    color: var(--cor-ciano);
+}
+
+/* Botões Neon */
+.btn-neon {
+    background: transparent;
+    border: 2px solid var(--cor-ciano);
+    color: var(--cor-ciano);
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-neon:hover {
+    background: var(--cor-ciano);
+    color: var(--cor-fundo);
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
+}
+
+/* Grid de Planos e Cards */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.titulo-secao {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background-color: var(--cor-card);
+    border: 1px solid #232836;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.card:hover {
+    border-color: var(--cor-azul);
+    transform: translateY(-5px);
+}
+
+.card h3 {
+    margin-bottom: 15px;
+    color: var(--cor-ciano);
+}
+
+.card .preco {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 20px 0;
+    color: var(--cor-texto);
+}
+
+/* Formulários de Login/Cadastro */
+.box-formulario {
+    background-color: var(--cor-card);
+    border: 1px solid #232836;
+    max-width: 450px;
+    margin: 60px auto;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.grupo-campo {
+    margin-bottom: 20px;
+}
+
+.grupo-campo label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--cor-texto-segundario);
+}
+
+.grupo-campo input, .grupo-campo select {
+    width: 100%;
+    padding: 12px;
+    background-color: #0f111a;
+    border: 1px solid #232836;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.grupo-campo input:focus {
+    border-color: var(--cor-ciano);
+    outline: none;
+}
+
+.btn-form {
+    width: 100%;
+    margin-top: 10px;
+}
